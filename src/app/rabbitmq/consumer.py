@@ -3,13 +3,16 @@ import json
 import aio_pika
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.db.session import get_engine, get_session_maker
-from src.app.core.config import settings
+from src.app.db.session import engine as get_engine, AsyncSessionLocal as get_session_maker
+from src.app.core.config import get_settings as settings
 from src.app.schemas.tasks import PackageTask
 from src.app.services.delivery import handle_package_task
 
 import motor.motor_asyncio
 from loguru import logger
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 RABBIT_QUEUE = "package_register"

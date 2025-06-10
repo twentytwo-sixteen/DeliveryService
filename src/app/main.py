@@ -7,6 +7,9 @@ import uuid
 from src.app.cache.cache_init import init_cache
 from src.app.api.routes.company import router_assign_company
 from src.app.core.healthcheck import router as health_router
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 

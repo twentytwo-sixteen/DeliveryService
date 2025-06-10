@@ -1,8 +1,8 @@
 from pydantic import Field, SecretStr
-from functools import lru_cache
 from pydantic_settings import BaseSettings
-import logging
+from functools import lru_cache
 from enum import Enum
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -12,39 +12,33 @@ class Environment(str, Enum):
     PRODUCTION = "production"
 
 class Settings(BaseSettings):
-    # App
     env: Environment = Field(Environment.LOCAL, env="ENV")
     app_name: str = Field("delivery_service", env="APP_NAME")
     debug: bool = Field(True, env="DEBUG")
 
-    # DB
     db_host: str = Field(..., env="POSTGRES_HOST")
     db_port: int = Field(5432, env="POSTGRES_PORT")
     db_name: str = Field(..., env="POSTGRES_DB")
     db_user: str = Field(..., env="POSTGRES_USER")
     db_password: str = Field(..., env="POSTGRES_PASSWORD")
 
-    # Redis
-    redis_host: str = Field("localhost", env="REDIS_HOST")
+    redis_host: str = Field(..., env="REDIS_HOST")
     redis_port: int = Field(6379, env="REDIS_PORT")
 
-    # Mongo
     mongo_uri: str = Field(..., env="MONGO_URI")
     mongo_db: str = Field(..., env="MONGO_DB")
 
-    # RabbitMQ
     rabbitmq_host: str = Field(..., env="RABBITMQ_HOST")
+    rabbitmq_port: int = Field(5672, env="RABBITMQ_PORT")
     rabbitmq_user: str = Field(..., env="RABBITMQ_USER")
     rabbitmq_pass: str = Field(..., env="RABBITMQ_PASS")
-    rabbitmq_timeout: int = 10
-    rabbitmq_message_ttl: int = 86400000
-    rabbitmq_dlx_exchange: str = "package_dlx"
+    rabbitmq_vhost: str = Field("/", env="RABBITMQ_VHOST")
+    
     @property
     def rabbitmq_url(self) -> str:
-        return f"amqp://{self.rabbitmq_user}:{self.rabbitmq_pass}@{self.rabbitmq_host}/"
+        return f"amqp://{self.rabbitmq_user}:{self.rabbitmq_pass}@{self.rabbitmq_host}:{self.rabbitmq_port}{self.rabbitmq_vhost}"
 
-    # Other
-    secret_key: str = Field(..., env="SECRET_KEY")
+    secret_key: SecretStr = Field(..., env="SECRET_KEY")
 
     class Config:
         env_file = ".env"
@@ -52,11 +46,8 @@ class Settings(BaseSettings):
         extra = "ignore"
         case_sensitive = False
 
-@lru_cache(maxsize=1)
+@lru_cache()
 def get_settings() -> Settings:
     settings = Settings()
-    logger.info(
-        f"Loaded settings for {settings.app_name} "
-        f"(env: {settings.env.value}, debug: {settings.debug})"
-    )
+    logger.info(f"Loaded settings for {settings.app_name} (env: {settings.env}, debug: {settings.debug})")
     return settings

@@ -1,0 +1,97 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Poetry
+poetry.lock
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+
+# VSCode settings and workspace files
+.vscode/
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+
+# PyCharm
+.idea/
+
+# Docker
+docker/*.log
+docker/*.tmp
+docker-compose.override.yml
+
+# Alembic
+alembic.ini
+src/migrations/__pycache__/
+src/migrations/versions/__pycache__/
+
+# Logs and databases
+*.log
+*.sqlite3
+*.db
+
+# Test outputs
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.tox/
+
+# mypy
+.mypy_cache/
+
+# Ignore compiled files from other tools
+*.pyc
+
+# Ignore env vars or secrets files if any
+.env
+
+# Ignore backups and swap files
+*~
+*.swp
+*.swo
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore compiled binaries
+*.exe
+*.dll
+*.obj
+*.o
+
+# macOS system files
+.DS_Store
