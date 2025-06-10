@@ -6,6 +6,7 @@ from src.app.api.routes.parcel_types import router_package_type
 import uuid
 from src.app.cache.cache_init import init_cache
 from src.app.api.routes.company import router_assign_company
+from src.app.core.healthcheck import router as health_router
 
 app = FastAPI()
 
@@ -45,3 +46,4 @@ app.include_router(router_package_type)
 app.include_router(router_packages_get)
 app.include_router(router_package_by_id_get)
 app.include_router(router_assign_company)
+app.include_router(health_router)

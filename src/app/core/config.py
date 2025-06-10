@@ -1,24 +1,32 @@
-# src/app/core/config.py
-from pydantic import Field
+from pydantic import Field, SecretStr
 from functools import lru_cache
 from pydantic_settings import BaseSettings
+import logging
+from enum import Enum
+
+logger = logging.getLogger(__name__)
+
+class Environment(str, Enum):
+    LOCAL = "local"
+    STAGING = "staging"
+    PRODUCTION = "production"
 
 class Settings(BaseSettings):
     # App
-    env: str = Field("local", env="ENV")
+    env: Environment = Field(Environment.LOCAL, env="ENV")
     app_name: str = Field("delivery_service", env="APP_NAME")
     debug: bool = Field(True, env="DEBUG")
 
     # DB
     db_host: str = Field(..., env="POSTGRES_HOST")
-    db_port: int = Field(..., env="POSTGRES_PORT")
+    db_port: int = Field(5432, env="POSTGRES_PORT")
     db_name: str = Field(..., env="POSTGRES_DB")
     db_user: str = Field(..., env="POSTGRES_USER")
     db_password: str = Field(..., env="POSTGRES_PASSWORD")
 
     # Redis
-    redis_host: str = Field(..., env="REDIS_HOST")
-    redis_port: int = Field(..., env="REDIS_PORT")
+    redis_host: str = Field("localhost", env="REDIS_HOST")
+    redis_port: int = Field(6379, env="REDIS_PORT")
 
     # Mongo
     mongo_uri: str = Field(..., env="MONGO_URI")
@@ -42,7 +50,13 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
         extra = "ignore"
+        case_sensitive = False
 
-@lru_cache()
-def get_settings():
-    return Settings()
+@lru_cache(maxsize=1)
+def get_settings() -> Settings:
+    settings = Settings()
+    logger.info(
+        f"Loaded settings for {settings.app_name} "
+        f"(env: {settings.env.value}, debug: {settings.debug})"
+    )
+    return settings
