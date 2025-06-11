@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: delivery_test
+          POSTGRES_USER: delivery_user
+          POSTGRES_PASSWORD: delivery_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready -U delivery_user -d delivery_test
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      # CI-переменные окружения (из .env.ci)
+      ENV: test
+      APP_NAME: delivery_service
+      DEBUG: false
+
+      # PostgreSQL
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: delivery_test
+      DB_USER: delivery_user
+      DB_PASSWORD: delivery_pass
+      DATABASE_URL: postgresql+asyncpg://delivery_user:delivery_pass@localhost:5432/delivery_test
+
+      # Заглушки для сервисов
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      MONGO_URI: mongodb://localhost:27017
+      MONGO_DB: delivery_logs_test
+      RABBITMQ_HOST: localhost
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+      RABBITMQ_VHOST: /
+      SECRET_KEY: test-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: "1.8.2"
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run pre-commit hooks
+        run: poetry run pre-commit run --all-files
+
+      - name: Run Alembic migrations
+        run: poetry run alembic upgrade head
+
+      - name: Run tests
+        run: poetry run pytest -v

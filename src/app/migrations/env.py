@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.orm import sessionmaker
 from alembic import context
 import sys
-
+from src.app.core.config import get_settings
 from app.db.models import Package, PackageType, Company
 from app.db.models.base import Base
 from app.core.config import get_settings
@@ -23,10 +23,7 @@ fileConfig(config.config_file_name)
 
 target_metadata = Base.metadata
 
-DATABASE_URL = (
-    f"postgresql+asyncpg://{settings.db_user}:{settings.db_password}"
-    f"@{settings.db_host}:{settings.db_port}/{settings.db_name}"
-)
+DATABASE_URL = settings.database_url
 
 def run_migrations_offline() -> None:
     context.configure(

@@ -37,6 +37,7 @@ isort = "^5.13.2"
 mypy = "^1.10.0"
 ruff = "^0.4.4"
 pre-commit = "^3.7.0"
+flake8 = "^7.2.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -44,4 +45,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 worker = "src.app.rabbitmq.consumer:main"
-
