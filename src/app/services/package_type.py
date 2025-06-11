@@ -33,7 +33,7 @@ async def get_all_package_types(
             .limit(limit)
             .order_by(PackageType.id)
         )
-        return result.scalars().all()
+        return await result.scalars().all()
     except Exception as e:
         logger.error("Error fetching package types: %s", str(e))
         raise
