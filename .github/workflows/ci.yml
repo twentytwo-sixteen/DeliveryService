@@ -17,8 +17,8 @@ jobs:
           POSTGRES_DB: delivery_test
           POSTGRES_USER: delivery_user
           POSTGRES_PASSWORD: delivery_pass
-        ports:
-          - 5432:5432
+        # ports:
+        #   - 5432:5432
         options: >-
           --health-cmd pg_isready -U delivery_user -d delivery_test
           --health-interval 5s
